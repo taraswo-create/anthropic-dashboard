@@ -22,6 +22,7 @@ import {
   ArrowUpRight,
   BookOpenCheck,
   BrainCircuit,
+  CalendarDays,
   CheckCircle2,
   Code2,
   Compass,
@@ -29,28 +30,34 @@ import {
   GraduationCap,
   Layers3,
   Moon,
+  RefreshCcw,
   Route as RouteIcon,
   ShieldCheck,
   Sun,
+  Users,
   Workflow,
 } from "lucide-react";
 
 type Theme = "light" | "dark";
-type Track = "Все" | "Для всех" | "Разработчикам" | "Командам" | "Safety";
+type Track = "Все" | "Для всех" | "Разработчикам" | "Командам";
 
 type Program = {
   level: number;
+  week: string;
   title: string;
-  track: Track;
+  track: Exclude<Track, "Все">;
   difficulty: string;
   source: string;
   sourceLabel: string;
   outcome: string;
   topics: string[];
   practice: string;
+  teamFormat: string;
   hours: string;
   depth: number;
 };
+
+const STORAGE_KEY = "anthropic-corporate-learning-progress-v1";
 
 const sources = {
   learn: "https://www.anthropic.com/learn",
@@ -66,106 +73,122 @@ const sources = {
 const programs: Program[] = [
   {
     level: 1,
-    title: "Claude 101: первое знакомство",
+    week: "Неделя 1",
+    title: "Claude 101: рабочие сценарии",
     track: "Для всех",
     difficulty: "Старт",
     source: sources.learn,
     sourceLabel: "Anthropic Academy",
-    outcome: "Понять, где Claude полезен в работе, учёбе и личных проектах.",
-    topics: ["Что умеет Claude", "модели Opus, Sonnet, Haiku", "диалог, файлы, анализ, web search"],
-    practice: "Соберите 5 рабочих сценариев: письмо, анализ документа, план, исследование, визуальное резюме.",
-    hours: "1–2 ч",
-    depth: 15,
+    outcome: "Сотрудники понимают, где Claude полезен в работе, обучении и личной продуктивности.",
+    topics: ["возможности Claude", "модели Opus, Sonnet, Haiku", "диалог, файлы, анализ, web search"],
+    practice: "Собрать 5 сценариев для своей роли: письмо, анализ документа, план, исследование, визуальное резюме.",
+    teamFormat: "60 минут воркшоп + 30 минут самостоятельной практики.",
+    hours: "1,5 ч",
+    depth: 14,
   },
   {
     level: 2,
-    title: "AI Fluency: Framework & Foundations",
+    week: "Неделя 1–2",
+    title: "AI Fluency: безопасная делегация",
     track: "Для всех",
     difficulty: "База",
     source: sources.aiFluency,
     sourceLabel: "AI Fluency",
-    outcome: "Научиться взаимодействовать с AI эффективно, этично и безопасно.",
+    outcome: "Участники используют AI Fluency Framework: delegation, description, discernment и diligence.",
     topics: ["delegation", "description", "discernment", "diligence", "description-discernment loop"],
-    practice: "Возьмите одну рабочую задачу и пройдите цикл: описать, делегировать, проверить, улучшить.",
+    practice: "Выбрать одну рабочую задачу и пройти цикл: описать, делегировать, проверить, улучшить.",
+    teamFormat: "Домашнее задание с разбором 2–3 примеров на встрече команды.",
     hours: "3–5 ч",
     depth: 28,
   },
   {
     level: 3,
+    week: "Неделя 2",
     title: "Prompt Engineering: управляемые результаты",
     track: "Для всех",
     difficulty: "Практика",
     source: sources.prompt,
     sourceLabel: "Prompt engineering docs",
-    outcome: "Писать промпты с критериями успеха, примерами и понятной структурой.",
+    outcome: "Команда пишет промпты с критериями успеха, примерами, ролями и структурой ответа.",
     topics: ["clarity", "examples", "XML structuring", "role prompting", "thinking", "prompt chaining"],
-    practice: "Создайте шаблон промпта для HR/обучения: входные данные, формат ответа, критерии качества.",
+    practice: "Создать шаблон промпта для обучения или HR: входные данные, формат ответа, критерии качества.",
+    teamFormat: "Парная работа: один участник пишет промпт, второй проверяет результат по критериям.",
     hours: "4–6 ч",
     depth: 42,
   },
   {
     level: 4,
+    week: "Неделя 3",
+    title: "Claude for Work: командные процессы",
+    track: "Командам",
+    difficulty: "Внедрение",
+    source: sources.learn,
+    sourceLabel: "Anthropic Academy",
+    outcome: "Появляется карта процессов, где Claude помогает команде без нарушения правил безопасности.",
+    topics: ["use cases", "team productivity", "knowledge work", "review workflow", "responsible use"],
+    practice: "Описать 3 процесса команды: цель, входные данные, ограничения, контроль качества, владелец.",
+    teamFormat: "90 минут фасилитированной сессии с руководителем направления.",
+    hours: "1 день",
+    depth: 54,
+  },
+  {
+    level: 5,
+    week: "Неделя 3–4",
     title: "Build with Claude: API quickstart",
     track: "Разработчикам",
     difficulty: "Разработка",
     source: sources.build,
     sourceLabel: "Build with Claude",
-    outcome: "Сделать первый API-вызов и понять базовую архитектуру Claude-приложения.",
+    outcome: "Техническая группа понимает Messages API, SDKs и первый API-вызов.",
     topics: ["developer account", "API keys", "Messages API", "SDKs", "quickstart"],
-    practice: "Соберите мини-прототип: форма вопроса → запрос к Claude → структурированный ответ.",
-    hours: "1 день",
-    depth: 55,
+    practice: "Собрать мини-прототип: форма вопроса, запрос к Claude, структурированный ответ.",
+    teamFormat: "Технический lab для разработчиков или no-code обзор архитектуры для владельцев продукта.",
+    hours: "1–2 дня",
+    depth: 62,
   },
   {
-    level: 5,
+    level: 6,
+    week: "Неделя 4",
     title: "API Development: файлы, batch, caching",
     track: "Разработчикам",
     difficulty: "Углубление",
     source: sources.build,
     sourceLabel: "Build with Claude",
-    outcome: "Проектировать более устойчивые и экономичные AI-сценарии.",
+    outcome: "Команда проектирует устойчивые и экономичные AI-сценарии для документов и пакетной обработки.",
     topics: ["Message Batches API", "prompt caching", "Files API", "PDF support", "Admin API"],
-    practice: "Спроектируйте обработку пакета учебных материалов: загрузка, анализ, резюме, контроль качества.",
+    practice: "Спроектировать обработку пакета учебных материалов: загрузка, анализ, резюме, контроль качества.",
+    teamFormat: "Архитектурный разбор с чеклистом рисков, стоимости и качества.",
     hours: "2–3 дня",
-    depth: 68,
-  },
-  {
-    level: 6,
-    title: "MCP и tool use: подключение контекста",
-    track: "Разработчикам",
-    difficulty: "Интеграции",
-    source: sources.build,
-    sourceLabel: "Build with Claude",
-    outcome: "Понять, как Claude подключается к инструментам и внешним источникам данных.",
-    topics: ["tool use", "MCP Desktop", "ready-made MCP servers", "remote MCP", "Messages API"],
-    practice: "Опишите архитектуру внутреннего учебного ассистента с доступом к базе знаний и задачам.",
-    hours: "2–4 дня",
-    depth: 78,
+    depth: 72,
   },
   {
     level: 7,
-    title: "Claude Code: агентная разработка",
+    week: "Неделя 5",
+    title: "MCP, tool use и Claude Code",
     track: "Разработчикам",
     difficulty: "Продвинуто",
     source: sources.claudeCode,
     sourceLabel: "Claude Code docs",
-    outcome: "Делегировать Claude Code реальные задачи: анализ кодовой базы, правки, тесты, PR.",
-    topics: ["terminal", "IDE", "CLAUDE.md", "workflows", "MCP", "hooks", "Agent SDK"],
-    practice: "Пройдите quickstart: изучить кодовую базу, внести исправление, запустить проверку, подготовить commit.",
+    outcome: "Разработчики понимают, как подключать инструменты, работать с кодовой базой и автоматизировать задачи.",
+    topics: ["tool use", "MCP", "Claude Code", "CLAUDE.md", "hooks", "Agent SDK"],
+    practice: "Пройти quickstart: изучить кодовую базу, внести исправление, запустить проверку, подготовить commit.",
+    teamFormat: "Практикум в песочнице: одна небольшая задача на участника или пару.",
     hours: "1 неделя",
-    depth: 88,
+    depth: 86,
   },
   {
     level: 8,
-    title: "Evals, safety и внедрение в организации",
+    week: "Неделя 6",
+    title: "Evals, safety и pilot charter",
     track: "Командам",
     difficulty: "Эксперт",
     source: sources.build,
     sourceLabel: "Build with Claude",
-    outcome: "Запускать Claude не как эксперимент, а как управляемую практику с метриками и рисками.",
+    outcome: "Claude запускается не как эксперимент, а как управляемый пилот с метриками, рисками и правилами.",
     topics: ["success criteria", "automated evaluations", "Eval Tool", "enterprise deployment", "AI safety"],
-    practice: "Соберите pilot charter: цель, риски, критерии качества, eval-набор, правила использования.",
-    hours: "2–3 недели",
+    practice: "Собрать pilot charter: цель, риски, eval-набор, роли, правила использования, критерии запуска.",
+    teamFormat: "Итоговая защита пилота перед владельцем процесса и L&D/IT/безопасностью.",
+    hours: "1–2 недели",
     depth: 96,
   },
 ];
@@ -180,8 +203,27 @@ const trackData = [
   { name: "Для всех", count: programs.filter((program) => program.track === "Для всех").length },
   { name: "Dev", count: programs.filter((program) => program.track === "Разработчикам").length },
   { name: "Teams", count: programs.filter((program) => program.track === "Командам").length },
-  { name: "Safety", count: 1 },
 ];
+
+const weekPlan = [
+  ["Неделя 1", "Claude 101 + AI Fluency", "общая рамка безопасной работы"],
+  ["Неделя 2", "Prompt Engineering", "шаблоны промптов и критерии качества"],
+  ["Неделя 3", "Командные процессы + API обзор", "карта применений и первый прототип"],
+  ["Неделя 4", "Files, batch, caching", "архитектура обработки материалов"],
+  ["Неделя 5", "MCP + Claude Code", "интеграции и агентная разработка"],
+  ["Неделя 6", "Evals + pilot charter", "готовый план пилота"],
+];
+
+function readSavedProgress() {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = window.localStorage.getItem(STORAGE_KEY);
+    const parsed = raw ? JSON.parse(raw) : [];
+    return Array.isArray(parsed) ? parsed.filter((item) => typeof item === "number") : [];
+  } catch {
+    return [];
+  }
+}
 
 function Logo() {
   return (
@@ -238,17 +280,32 @@ function KpiCard({
   );
 }
 
-function ProgramCard({ program, active, onSelect }: { program: Program; active: boolean; onSelect: () => void }) {
+function ProgramCard({
+  program,
+  active,
+  completed,
+  onSelect,
+}: {
+  program: Program;
+  active: boolean;
+  completed: boolean;
+  onSelect: () => void;
+}) {
   return (
     <button
       className={active ? "program-card active" : "program-card"}
       onClick={onSelect}
       data-testid={`button-program-${program.level}`}
+      aria-pressed={active}
     >
-      <span className="program-index">L{program.level}</span>
+      <span className={completed ? "program-index complete" : "program-index"}>
+        {completed ? "✓" : `L${program.level}`}
+      </span>
       <span className="program-copy">
         <strong>{program.title}</strong>
-        <small>{program.difficulty} · {program.hours}</small>
+        <small>
+          {program.week} · {program.difficulty} · {program.hours}
+        </small>
       </span>
       <span className="program-track">{program.track}</span>
     </button>
@@ -258,6 +315,7 @@ function ProgramCard({ program, active, onSelect }: { program: Program; active: 
 function Home() {
   const [selectedTrack, setSelectedTrack] = useState<Track>("Все");
   const [activeLevel, setActiveLevel] = useState(1);
+  const [completedLevels, setCompletedLevels] = useState<number[]>(readSavedProgress);
   const [theme, setTheme] = useState<Theme>(() =>
     typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light",
   );
@@ -265,6 +323,14 @@ function Home() {
   useEffect(() => {
     document.documentElement.classList.toggle("dark", theme === "dark");
   }, [theme]);
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(completedLevels));
+    } catch {
+      // If browser storage is unavailable, progress remains in the current tab only.
+    }
+  }, [completedLevels]);
 
   const filteredPrograms = useMemo(
     () => (selectedTrack === "Все" ? programs : programs.filter((program) => program.track === selectedTrack)),
@@ -278,29 +344,37 @@ function Home() {
   }, [activeLevel, filteredPrograms]);
 
   const activeProgram = programs.find((program) => program.level === activeLevel) ?? programs[0];
+  const progressPercent = Math.round((completedLevels.length / programs.length) * 100);
+  const activeCompleted = completedLevels.includes(activeProgram.level);
+
+  function toggleLevel(level: number) {
+    setCompletedLevels((current) =>
+      current.includes(level) ? current.filter((item) => item !== level) : [...current, level].sort((a, b) => a - b),
+    );
+  }
 
   return (
     <div className="app-shell">
       <a className="skip-link" href="#main-content">
         Перейти к содержанию
       </a>
-      <aside className="rail" aria-label="Навигация учебного гайда">
+      <aside className="rail" aria-label="Навигация учебной программы">
         <div className="brand">
           <Logo />
           <div>
             <span>Anthropic Learn</span>
-            <small>от простого к сложному</small>
+            <small>корпоративный маршрут</small>
           </div>
         </div>
         <nav className="rail-nav" aria-label="Разделы">
           <a href="#overview">Обзор</a>
           <a href="#path">Маршрут</a>
-          <a href="#practice">Практика</a>
+          <a href="#calendar">План</a>
           <a href="#sources">Источники</a>
         </nav>
         <div className="rail-note">
           <GraduationCap size={18} aria-hidden="true" />
-          <span>Основано на Anthropic Academy, docs и страницах Claude</span>
+          <span>Прогресс хранится только в браузере посетителя, без логина и общей базы.</span>
         </div>
       </aside>
 
@@ -308,7 +382,7 @@ function Home() {
         <header className="topbar">
           <div>
             <p className="eyebrow">Обновлено: 4 мая 2026</p>
-            <h1>Гайд по учебным программам Anthropic</h1>
+            <h1>Корпоративная программа Anthropic на 4–6 недель</h1>
           </div>
           <ThemeToggle theme={theme} setTheme={setTheme} />
         </header>
@@ -318,10 +392,10 @@ function Home() {
             <article className="hero-card">
               <div className="hero-copy">
                 <p className="eyebrow">Learning roadmap</p>
-                <h2 id="overview-title">Последовательность обучения: от Claude 101 до evals, MCP и Claude Code.</h2>
+                <h2 id="overview-title">От базовой AI-грамотности до пилота Claude с evals и правилами внедрения.</h2>
                 <p>
-                  Маршрут собран по официальным материалам Anthropic: Anthropic Academy, AI Fluency, Build with Claude,
-                  prompt engineering documentation и Claude Code documentation.
+                  Программа собрана по официальным материалам Anthropic: Anthropic Academy, AI Fluency, Build with
+                  Claude, prompt engineering documentation и Claude Code documentation.
                 </p>
               </div>
               <div className="hero-actions">
@@ -331,21 +405,41 @@ function Home() {
               </div>
             </article>
 
-            <div className="kpi-grid" aria-label="Ключевые показатели гайда">
-              <KpiCard icon={<RouteIcon size={20} />} label="Уровни" value="8" detail="от старта до экспертного внедрения" />
-              <KpiCard icon={<BookOpenCheck size={20} />} label="Курсы" value="Academy" detail="Claude 101, AI Fluency, API, MCP, Code" />
-              <KpiCard icon={<Workflow size={20} />} label="Практика" value="8 заданий" detail="по одному результату на уровень" />
+            <div className="kpi-grid" aria-label="Ключевые показатели программы">
+              <KpiCard icon={<CalendarDays size={20} />} label="Срок" value="4–6 недель" detail="можно сжать или расширить" />
+              <KpiCard icon={<RouteIcon size={20} />} label="Уровни" value="8" detail="от старта до pilot charter" />
+              <KpiCard icon={<Users size={20} />} label="Доступ" value="без логина" detail="каждый посетитель видит свой прогресс" />
               <KpiCard icon={<ShieldCheck size={20} />} label="Фокус" value="Safe AI" detail="эффективно, этично, безопасно" />
+            </div>
+          </section>
+
+          <section className="progress-card" aria-labelledby="progress-title">
+            <div>
+              <p className="eyebrow">Personal progress</p>
+              <h2 id="progress-title">Ваш прогресс: {progressPercent}%</h2>
+              <p>
+                Отмечайте уровни по мере прохождения. Данные сохраняются в этом браузере и не передаются другим
+                посетителям.
+              </p>
+            </div>
+            <div className="progress-controls">
+              <div className="progress-bar" role="progressbar" aria-valuenow={progressPercent} aria-valuemin={0} aria-valuemax={100}>
+                <span style={{ width: `${progressPercent}%` }} />
+              </div>
+              <button className="reset-button" data-testid="button-reset-progress" onClick={() => setCompletedLevels([])}>
+                <RefreshCcw size={16} aria-hidden="true" />
+                Сбросить мой прогресс
+              </button>
             </div>
           </section>
 
           <section id="path" className="section-grid" aria-labelledby="path-title">
             <div className="section-heading">
               <p className="eyebrow">Curriculum path</p>
-              <h2 id="path-title">Выберите учебный трек</h2>
+              <h2 id="path-title">Маршрут обучения</h2>
               <p>
-                Фильтр помогает собрать маршрут под аудиторию: универсальный старт, технический трек для разработчиков
-                или внедрение для команд.
+                Фильтр помогает собрать программу под аудиторию: общий старт, технический трек для разработчиков или
+                управленческий трек для внедрения.
               </p>
             </div>
 
@@ -369,6 +463,7 @@ function Home() {
                     key={program.level}
                     program={program}
                     active={activeProgram.level === program.level}
+                    completed={completedLevels.includes(program.level)}
                     onSelect={() => setActiveLevel(program.level)}
                   />
                 ))}
@@ -377,7 +472,7 @@ function Home() {
               <article className="model-detail" data-testid="card-active-program">
                 <div className="model-detail-header">
                   <div>
-                    <p className="eyebrow">Level {activeProgram.level}</p>
+                    <p className="eyebrow">Level {activeProgram.level} · {activeProgram.week}</p>
                     <h3>{activeProgram.title}</h3>
                   </div>
                   <a href={activeProgram.source} target="_blank" rel="noopener noreferrer" aria-label="Открыть источник">
@@ -396,18 +491,30 @@ function Home() {
                 <div className="practice-box">
                   <strong>Практический результат</strong>
                   <p>{activeProgram.practice}</p>
-                  <SourceLink href={activeProgram.source}>{activeProgram.sourceLabel}</SourceLink>
+                  <strong>Формат для команды</strong>
+                  <p>{activeProgram.teamFormat}</p>
+                  <div className="practice-actions">
+                    <button
+                      className={activeCompleted ? "complete-button done" : "complete-button"}
+                      data-testid="button-toggle-complete"
+                      onClick={() => toggleLevel(activeProgram.level)}
+                    >
+                      <CheckCircle2 size={16} aria-hidden="true" />
+                      {activeCompleted ? "Уровень пройден" : "Отметить уровень"}
+                    </button>
+                    <SourceLink href={activeProgram.source}>{activeProgram.sourceLabel}</SourceLink>
+                  </div>
                 </div>
               </article>
             </div>
           </section>
 
-          <section className="chart-grid" aria-labelledby="progress-title">
+          <section className="chart-grid" aria-labelledby="curve-title">
             <article className="chart-card wide">
               <div className="card-title">
                 <div>
                   <p className="eyebrow">Learning curve</p>
-                  <h2 id="progress-title">Рост сложности по уровням</h2>
+                  <h2 id="curve-title">Рост сложности по уровням</h2>
                 </div>
                 <Layers3 size={20} aria-hidden="true" />
               </div>
@@ -445,7 +552,7 @@ function Home() {
               <div className="card-title">
                 <div>
                   <p className="eyebrow">Tracks</p>
-                  <h2>Распределение гайда</h2>
+                  <h2>Распределение уровней</h2>
                 </div>
                 <Compass size={20} aria-hidden="true" />
               </div>
@@ -467,29 +574,22 @@ function Home() {
             </article>
           </section>
 
-          <section id="practice" className="section-grid" aria-labelledby="practice-title">
+          <section id="calendar" className="section-grid" aria-labelledby="calendar-title">
             <div className="section-heading">
-              <p className="eyebrow">How to use</p>
-              <h2 id="practice-title">Как проходить маршрут</h2>
-              <p>Для корпоративного обучения удобно проходить уровни спринтами и завершать каждый измеримым артефактом.</p>
+              <p className="eyebrow">4–6 week rollout</p>
+              <h2 id="calendar-title">Календарный план</h2>
+              <p>Программу можно провести за 6 недель или сжать до 4 недель, объединив недели 1–2 и 5–6.</p>
             </div>
 
             <div className="safety-layout">
-              <article className="mini-card">
-                <GraduationCap size={20} aria-hidden="true" />
-                <h3>Для сотрудников без кода</h3>
-                <p>Берите уровни 1–3: Claude 101, AI Fluency и prompt engineering. Итог: библиотека рабочих промптов и правила проверки результатов.</p>
-              </article>
-              <article className="mini-card">
-                <Code2 size={20} aria-hidden="true" />
-                <h3>Для разработчиков</h3>
-                <p>После уровней 1–3 переходите к API, Files, batch, prompt caching, MCP и Claude Code. Итог: прототип или автоматизация.</p>
-              </article>
-              <article className="mini-card">
-                <BrainCircuit size={20} aria-hidden="true" />
-                <h3>Для руководителей и L&D</h3>
-                <p>Добавьте уровень 8: критерии успеха, evals, риски, политика использования и pilot charter для команды.</p>
-              </article>
+              {weekPlan.map(([week, title, result]) => (
+                <article className="mini-card" key={week}>
+                  <CalendarDays size={20} aria-hidden="true" />
+                  <h3>{week}</h3>
+                  <p><strong>{title}</strong></p>
+                  <p>{result}</p>
+                </article>
+              ))}
             </div>
           </section>
 
@@ -497,7 +597,10 @@ function Home() {
             <div>
               <p className="eyebrow">Sources</p>
               <h2 id="sources-title">Официальные страницы Anthropic</h2>
-              <p>Гайд не копирует закрытые курсы, а структурирует открытые страницы Anthropic и документации Claude в учебный маршрут.</p>
+              <p>
+                Гайд структурирует открытые страницы Anthropic и документацию Claude. Внешние ссылки открываются в новой
+                вкладке, без логина к этим материалам.
+              </p>
             </div>
             <div className="source-grid">
               <SourceLink href={sources.learn}>Anthropic Academy</SourceLink>
