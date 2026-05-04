@@ -353,11 +353,15 @@ function Home() {
     );
   }
 
+  function scrollToSection(sectionId: string) {
+    document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
   return (
     <div className="app-shell">
-      <a className="skip-link" href="#main-content">
+      <button className="skip-link" onClick={() => scrollToSection("main-content")}>
         Перейти к содержанию
-      </a>
+      </button>
       <aside className="rail" aria-label="Навигация учебной программы">
         <div className="brand">
           <Logo />
@@ -367,10 +371,18 @@ function Home() {
           </div>
         </div>
         <nav className="rail-nav" aria-label="Разделы">
-          <a href="#overview">Обзор</a>
-          <a href="#path">Маршрут</a>
-          <a href="#calendar">План</a>
-          <a href="#sources">Источники</a>
+          <button type="button" onClick={() => scrollToSection("overview")} data-testid="button-nav-overview">
+            Обзор
+          </button>
+          <button type="button" onClick={() => scrollToSection("path")} data-testid="button-nav-path">
+            Маршрут
+          </button>
+          <button type="button" onClick={() => scrollToSection("calendar")} data-testid="button-nav-calendar">
+            План
+          </button>
+          <button type="button" onClick={() => scrollToSection("sources")} data-testid="button-nav-sources">
+            Источники
+          </button>
         </nav>
         <div className="rail-note">
           <GraduationCap size={18} aria-hidden="true" />

@@ -144,6 +144,7 @@
   top: 1rem;
   z-index: 50;
   transform: translateY(-140%);
+  border: 0;
   border-radius: 999px;
   background: hsl(var(--primary));
   color: hsl(var(--primary-foreground));
@@ -215,7 +216,7 @@
   gap: 0.35rem;
 }
 
-.rail-nav a,
+.rail-nav button,
 .source-link,
 .theme-toggle,
 .chip,
@@ -226,16 +227,19 @@
   min-height: 44px;
 }
 
-.rail-nav a {
+.rail-nav button {
   border-radius: 0.8rem;
+  border: 0;
   color: hsl(var(--foreground));
+  background: transparent;
   font-size: 0.94rem;
   font-weight: 650;
   padding: 0.75rem 0.9rem;
+  text-align: left;
   text-decoration: none;
 }
 
-.rail-nav a:hover {
+.rail-nav button:hover {
   background: hsl(var(--sidebar-accent));
 }
 
@@ -806,7 +810,7 @@
     padding-bottom: 0.15rem;
   }
 
-  .rail-nav a {
+  .rail-nav button {
     white-space: nowrap;
   }
 
