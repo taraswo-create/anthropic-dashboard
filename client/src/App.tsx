@@ -19,126 +19,176 @@ import {
   YAxis,
 } from "recharts";
 import {
-  Activity,
   ArrowUpRight,
   BookOpenCheck,
   BrainCircuit,
-  Building2,
   CheckCircle2,
   Code2,
+  Compass,
   ExternalLink,
+  GraduationCap,
+  Layers3,
   Moon,
+  Route as RouteIcon,
   ShieldCheck,
-  Smartphone,
   Sun,
+  Workflow,
 } from "lucide-react";
 
-type Model = {
-  name: string;
-  family: string;
-  tier: string;
-  safety: string;
-  score: number;
-  facts: string[];
-  link: string;
+type Theme = "light" | "dark";
+type Track = "Все" | "Для всех" | "Разработчикам" | "Командам" | "Safety";
+
+type Program = {
+  level: number;
+  title: string;
+  track: Track;
+  difficulty: string;
+  source: string;
+  sourceLabel: string;
+  outcome: string;
+  topics: string[];
+  practice: string;
+  hours: string;
+  depth: number;
 };
 
-type Theme = "light" | "dark";
-
-const sourceLinks = {
+const sources = {
+  learn: "https://www.anthropic.com/learn",
+  aiFluency: "https://www.anthropic.com/learn/claude-for-you",
+  build: "https://www.anthropic.com/learn/build-with-claude",
+  prompt: "https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/overview",
+  claudeCode: "https://docs.anthropic.com/en/docs/claude-code",
   company: "https://www.anthropic.com/company",
   claude: "https://www.anthropic.com/claude",
-  transparency: "https://www.anthropic.com/transparency",
-  careers: "https://www.anthropic.com/careers",
-  rsp: "https://www.anthropic.com/responsible-scaling-policy",
+  education: "https://www.anthropic.com/news/introducing-claude-for-education",
 };
 
-const models: Model[] = [
+const programs: Program[] = [
   {
-    name: "Claude Opus 4.7",
-    family: "Opus",
-    tier: "Самые амбициозные задачи",
-    safety: "CB-1 / усиленные safeguards",
-    score: 4.7,
-    facts: [
-      "Самая мощная модель для сложных проектов.",
-      "Для документов, слайдов, таблиц, сложного анализа и deep research.",
-      "В Transparency Hub описана как модель с отдельной оценкой угроз CB-1 и autonomy TM1.",
-    ],
-    link: sourceLinks.transparency,
+    level: 1,
+    title: "Claude 101: первое знакомство",
+    track: "Для всех",
+    difficulty: "Старт",
+    source: sources.learn,
+    sourceLabel: "Anthropic Academy",
+    outcome: "Понять, где Claude полезен в работе, учёбе и личных проектах.",
+    topics: ["Что умеет Claude", "модели Opus, Sonnet, Haiku", "диалог, файлы, анализ, web search"],
+    practice: "Соберите 5 рабочих сценариев: письмо, анализ документа, план, исследование, визуальное резюме.",
+    hours: "1–2 ч",
+    depth: 15,
   },
   {
-    name: "Claude Sonnet 4.6",
-    family: "Sonnet",
-    tier: "Ежедневная работа",
-    safety: "ASL-3",
-    score: 4.6,
-    facts: [
-      "Позиционируется как мощная и универсальная модель.",
-      "Подходит для письма, быстрого анализа и автоматизации задач.",
-      "Anthropic указывает выпуск под стандартом ASL-3.",
-    ],
-    link: sourceLinks.transparency,
+    level: 2,
+    title: "AI Fluency: Framework & Foundations",
+    track: "Для всех",
+    difficulty: "База",
+    source: sources.aiFluency,
+    sourceLabel: "AI Fluency",
+    outcome: "Научиться взаимодействовать с AI эффективно, этично и безопасно.",
+    topics: ["delegation", "description", "discernment", "diligence", "description-discernment loop"],
+    practice: "Возьмите одну рабочую задачу и пройдите цикл: описать, делегировать, проверить, улучшить.",
+    hours: "3–5 ч",
+    depth: 28,
   },
   {
-    name: "Claude Haiku 4.5",
-    family: "Haiku",
-    tier: "Скорость и лёгкие задачи",
-    safety: "ASL-2",
-    score: 4.5,
-    facts: [
-      "Самая быстрая модель линейки Claude.",
-      "Сфокусирована на быстрых ответах, everyday tasks и web search.",
-      "Transparency Hub указывает выпуск под ASL-2 и rule-out ASL-3.",
-    ],
-    link: sourceLinks.claude,
+    level: 3,
+    title: "Prompt Engineering: управляемые результаты",
+    track: "Для всех",
+    difficulty: "Практика",
+    source: sources.prompt,
+    sourceLabel: "Prompt engineering docs",
+    outcome: "Писать промпты с критериями успеха, примерами и понятной структурой.",
+    topics: ["clarity", "examples", "XML structuring", "role prompting", "thinking", "prompt chaining"],
+    practice: "Создайте шаблон промпта для HR/обучения: входные данные, формат ответа, критерии качества.",
+    hours: "4–6 ч",
+    depth: 42,
   },
   {
-    name: "Claude Opus 4.5",
-    family: "Opus",
-    tier: "Агентные и coding-задачи",
-    safety: "ASL-3",
-    score: 4.5,
-    facts: [
-      "Описан как hybrid reasoning model.",
-      "Отмечены сильные результаты в coding и агентных задачах.",
-      "Anthropic указывает, что модель ниже ASL-4 thresholds.",
-    ],
-    link: sourceLinks.transparency,
+    level: 4,
+    title: "Build with Claude: API quickstart",
+    track: "Разработчикам",
+    difficulty: "Разработка",
+    source: sources.build,
+    sourceLabel: "Build with Claude",
+    outcome: "Сделать первый API-вызов и понять базовую архитектуру Claude-приложения.",
+    topics: ["developer account", "API keys", "Messages API", "SDKs", "quickstart"],
+    practice: "Соберите мини-прототип: форма вопроса → запрос к Claude → структурированный ответ.",
+    hours: "1 день",
+    depth: 55,
+  },
+  {
+    level: 5,
+    title: "API Development: файлы, batch, caching",
+    track: "Разработчикам",
+    difficulty: "Углубление",
+    source: sources.build,
+    sourceLabel: "Build with Claude",
+    outcome: "Проектировать более устойчивые и экономичные AI-сценарии.",
+    topics: ["Message Batches API", "prompt caching", "Files API", "PDF support", "Admin API"],
+    practice: "Спроектируйте обработку пакета учебных материалов: загрузка, анализ, резюме, контроль качества.",
+    hours: "2–3 дня",
+    depth: 68,
+  },
+  {
+    level: 6,
+    title: "MCP и tool use: подключение контекста",
+    track: "Разработчикам",
+    difficulty: "Интеграции",
+    source: sources.build,
+    sourceLabel: "Build with Claude",
+    outcome: "Понять, как Claude подключается к инструментам и внешним источникам данных.",
+    topics: ["tool use", "MCP Desktop", "ready-made MCP servers", "remote MCP", "Messages API"],
+    practice: "Опишите архитектуру внутреннего учебного ассистента с доступом к базе знаний и задачам.",
+    hours: "2–4 дня",
+    depth: 78,
+  },
+  {
+    level: 7,
+    title: "Claude Code: агентная разработка",
+    track: "Разработчикам",
+    difficulty: "Продвинуто",
+    source: sources.claudeCode,
+    sourceLabel: "Claude Code docs",
+    outcome: "Делегировать Claude Code реальные задачи: анализ кодовой базы, правки, тесты, PR.",
+    topics: ["terminal", "IDE", "CLAUDE.md", "workflows", "MCP", "hooks", "Agent SDK"],
+    practice: "Пройдите quickstart: изучить кодовую базу, внести исправление, запустить проверку, подготовить commit.",
+    hours: "1 неделя",
+    depth: 88,
+  },
+  {
+    level: 8,
+    title: "Evals, safety и внедрение в организации",
+    track: "Командам",
+    difficulty: "Эксперт",
+    source: sources.build,
+    sourceLabel: "Build with Claude",
+    outcome: "Запускать Claude не как эксперимент, а как управляемую практику с метриками и рисками.",
+    topics: ["success criteria", "automated evaluations", "Eval Tool", "enterprise deployment", "AI safety"],
+    practice: "Соберите pilot charter: цель, риски, критерии качества, eval-набор, правила использования.",
+    hours: "2–3 недели",
+    depth: 96,
   },
 ];
 
-const capabilityData = [
-  { label: "Docs", opus: 92, sonnet: 77, haiku: 54 },
-  { label: "Code", opus: 88, sonnet: 82, haiku: 48 },
-  { label: "Analysis", opus: 94, sonnet: 79, haiku: 58 },
-  { label: "Speed", opus: 48, sonnet: 72, haiku: 95 },
-];
-
-const safetyData = models.map((model) => ({
-  name: model.family,
-  value: model.score,
-  safety: model.safety,
+const depthData = programs.map((program) => ({
+  name: `L${program.level}`,
+  depth: program.depth,
+  title: program.title,
 }));
 
-const timeline = [
-  { date: "2024", value: 37, label: "Claude 3.7 Sonnet" },
-  { date: "2025", value: 45, label: "Opus / Sonnet 4.5" },
-  { date: "2026", value: 47, label: "Opus 4.7" },
+const trackData = [
+  { name: "Для всех", count: programs.filter((program) => program.track === "Для всех").length },
+  { name: "Dev", count: programs.filter((program) => program.track === "Разработчикам").length },
+  { name: "Teams", count: programs.filter((program) => program.track === "Командам").length },
+  { name: "Safety", count: 1 },
 ];
 
 function Logo() {
   return (
-    <svg
-      aria-label="Anthropic dashboard logo"
-      className="logo-mark"
-      viewBox="0 0 40 40"
-      fill="none"
-      role="img"
-    >
+    <svg aria-label="Learning guide logo" className="logo-mark" viewBox="0 0 40 40" fill="none" role="img">
       <rect x="6" y="6" width="28" height="28" rx="7" stroke="currentColor" strokeWidth="2.4" />
-      <path d="M13 27L20 12L27 27" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
-      <path d="M16.5 21.5H23.5" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
+      <path d="M13 25.5L20 12L27 25.5" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
+      <path d="M15.5 22H24.5" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
     </svg>
   );
 }
@@ -188,9 +238,26 @@ function KpiCard({
   );
 }
 
+function ProgramCard({ program, active, onSelect }: { program: Program; active: boolean; onSelect: () => void }) {
+  return (
+    <button
+      className={active ? "program-card active" : "program-card"}
+      onClick={onSelect}
+      data-testid={`button-program-${program.level}`}
+    >
+      <span className="program-index">L{program.level}</span>
+      <span className="program-copy">
+        <strong>{program.title}</strong>
+        <small>{program.difficulty} · {program.hours}</small>
+      </span>
+      <span className="program-track">{program.track}</span>
+    </button>
+  );
+}
+
 function Home() {
-  const [selectedFamily, setSelectedFamily] = useState("All");
-  const [activeModel, setActiveModel] = useState(models[0].name);
+  const [selectedTrack, setSelectedTrack] = useState<Track>("Все");
+  const [activeLevel, setActiveLevel] = useState(1);
   const [theme, setTheme] = useState<Theme>(() =>
     typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light",
   );
@@ -199,35 +266,41 @@ function Home() {
     document.documentElement.classList.toggle("dark", theme === "dark");
   }, [theme]);
 
-  const filteredModels = useMemo(
-    () => (selectedFamily === "All" ? models : models.filter((model) => model.family === selectedFamily)),
-    [selectedFamily],
+  const filteredPrograms = useMemo(
+    () => (selectedTrack === "Все" ? programs : programs.filter((program) => program.track === selectedTrack)),
+    [selectedTrack],
   );
 
-  const currentModel = models.find((model) => model.name === activeModel) ?? models[0];
+  useEffect(() => {
+    if (!filteredPrograms.some((program) => program.level === activeLevel)) {
+      setActiveLevel(filteredPrograms[0]?.level ?? 1);
+    }
+  }, [activeLevel, filteredPrograms]);
+
+  const activeProgram = programs.find((program) => program.level === activeLevel) ?? programs[0];
 
   return (
     <div className="app-shell">
       <a className="skip-link" href="#main-content">
         Перейти к содержанию
       </a>
-      <aside className="rail" aria-label="Навигация дэшборда">
+      <aside className="rail" aria-label="Навигация учебного гайда">
         <div className="brand">
           <Logo />
           <div>
-            <span>Anthropic</span>
-            <small>Public dashboard</small>
+            <span>Anthropic Learn</span>
+            <small>от простого к сложному</small>
           </div>
         </div>
         <nav className="rail-nav" aria-label="Разделы">
           <a href="#overview">Обзор</a>
-          <a href="#models">Модели</a>
-          <a href="#safety">Safety</a>
+          <a href="#path">Маршрут</a>
+          <a href="#practice">Практика</a>
           <a href="#sources">Источники</a>
         </nav>
         <div className="rail-note">
-          <ShieldCheck size={18} aria-hidden="true" />
-          <span>Данные: публичные страницы Anthropic</span>
+          <GraduationCap size={18} aria-hidden="true" />
+          <span>Основано на Anthropic Academy, docs и страницах Claude</span>
         </div>
       </aside>
 
@@ -235,7 +308,7 @@ function Home() {
         <header className="topbar">
           <div>
             <p className="eyebrow">Обновлено: 4 мая 2026</p>
-            <h1>Интерактивный обзор Anthropic и Claude</h1>
+            <h1>Гайд по учебным программам Anthropic</h1>
           </div>
           <ThemeToggle theme={theme} setTheme={setTheme} />
         </header>
@@ -244,203 +317,197 @@ function Home() {
           <section id="overview" className="hero-grid" aria-labelledby="overview-title">
             <article className="hero-card">
               <div className="hero-copy">
-                <p className="eyebrow">AI safety & research company</p>
-                <h2 id="overview-title">Anthropic строит Claude вокруг надёжности, интерпретируемости и управляемости.</h2>
+                <p className="eyebrow">Learning roadmap</p>
+                <h2 id="overview-title">Последовательность обучения: от Claude 101 до evals, MCP и Claude Code.</h2>
                 <p>
-                  Дэшборд сводит публичные факты с сайта Anthropic: миссия, линейка Claude, safety-подход и полезные
-                  ссылки для дальнейшего изучения.
+                  Маршрут собран по официальным материалам Anthropic: Anthropic Academy, AI Fluency, Build with Claude,
+                  prompt engineering documentation и Claude Code documentation.
                 </p>
               </div>
               <div className="hero-actions">
-                <SourceLink href={sourceLinks.company}>О компании</SourceLink>
-                <SourceLink href={sourceLinks.claude}>Claude</SourceLink>
+                <SourceLink href={sources.learn}>Anthropic Academy</SourceLink>
+                <SourceLink href={sources.build}>Build with Claude</SourceLink>
+                <SourceLink href={sources.aiFluency}>AI Fluency</SourceLink>
               </div>
             </article>
 
-            <div className="kpi-grid" aria-label="Ключевые показатели">
-              <KpiCard icon={<Building2 size={20} />} label="Статус" value="PBC" detail="Public Benefit Corporation" />
-              <KpiCard icon={<BrainCircuit size={20} />} label="Фокус" value="Reliable" detail="interpretable, steerable AI" />
-              <KpiCard icon={<Activity size={20} />} label="Transparency" value="20.02.2026" detail="дата Model Report" />
-              <KpiCard icon={<Smartphone size={20} />} label="Доступ" value="Web + mobile" detail="Claude app и desktop" />
+            <div className="kpi-grid" aria-label="Ключевые показатели гайда">
+              <KpiCard icon={<RouteIcon size={20} />} label="Уровни" value="8" detail="от старта до экспертного внедрения" />
+              <KpiCard icon={<BookOpenCheck size={20} />} label="Курсы" value="Academy" detail="Claude 101, AI Fluency, API, MCP, Code" />
+              <KpiCard icon={<Workflow size={20} />} label="Практика" value="8 заданий" detail="по одному результату на уровень" />
+              <KpiCard icon={<ShieldCheck size={20} />} label="Фокус" value="Safe AI" detail="эффективно, этично, безопасно" />
             </div>
           </section>
 
-          <section id="models" className="section-grid" aria-labelledby="models-title">
+          <section id="path" className="section-grid" aria-labelledby="path-title">
             <div className="section-heading">
-              <p className="eyebrow">Model explorer</p>
-              <h2 id="models-title">Линейка Claude</h2>
-              <p>Фильтруйте модели по семейству и открывайте краткую карточку с официальной формулировкой назначения.</p>
+              <p className="eyebrow">Curriculum path</p>
+              <h2 id="path-title">Выберите учебный трек</h2>
+              <p>
+                Фильтр помогает собрать маршрут под аудиторию: универсальный старт, технический трек для разработчиков
+                или внедрение для команд.
+              </p>
             </div>
 
-            <div className="toolbar" role="group" aria-label="Фильтр моделей">
-              {["All", "Opus", "Sonnet", "Haiku"].map((family) => (
+            <div className="toolbar" role="group" aria-label="Фильтр учебных треков">
+              {(["Все", "Для всех", "Разработчикам", "Командам"] as Track[]).map((track) => (
                 <button
-                  key={family}
-                  className={selectedFamily === family ? "chip active" : "chip"}
-                  onClick={() => setSelectedFamily(family)}
-                  data-testid={`button-filter-${family.toLowerCase()}`}
+                  key={track}
+                  className={selectedTrack === track ? "chip active" : "chip"}
+                  onClick={() => setSelectedTrack(track)}
+                  data-testid={`button-filter-${track.toLowerCase().replace(/\s+/g, "-")}`}
                 >
-                  {family === "All" ? "Все" : family}
+                  {track}
                 </button>
               ))}
             </div>
 
             <div className="model-layout">
-              <div className="model-list" aria-label="Список моделей">
-                {filteredModels.map((model) => (
-                  <button
-                    key={model.name}
-                    className={activeModel === model.name ? "model-row active" : "model-row"}
-                    onClick={() => setActiveModel(model.name)}
-                    data-testid={`button-model-${model.name.toLowerCase().replace(/\s+/g, "-")}`}
-                  >
-                    <span>
-                      <strong>{model.name}</strong>
-                      <small>{model.tier}</small>
-                    </span>
-                    <em>{model.safety}</em>
-                  </button>
+              <div className="model-list" aria-label="Уровни программы">
+                {filteredPrograms.map((program) => (
+                  <ProgramCard
+                    key={program.level}
+                    program={program}
+                    active={activeProgram.level === program.level}
+                    onSelect={() => setActiveLevel(program.level)}
+                  />
                 ))}
               </div>
 
-              <article className="model-detail" data-testid="card-active-model">
+              <article className="model-detail" data-testid="card-active-program">
                 <div className="model-detail-header">
                   <div>
-                    <p className="eyebrow">{currentModel.family}</p>
-                    <h3>{currentModel.name}</h3>
+                    <p className="eyebrow">Level {activeProgram.level}</p>
+                    <h3>{activeProgram.title}</h3>
                   </div>
-                  <a href={currentModel.link} target="_blank" rel="noopener noreferrer" aria-label="Открыть источник">
+                  <a href={activeProgram.source} target="_blank" rel="noopener noreferrer" aria-label="Открыть источник">
                     <ArrowUpRight size={20} />
                   </a>
                 </div>
+                <p className="detail-lede">{activeProgram.outcome}</p>
                 <ul>
-                  {currentModel.facts.map((fact) => (
-                    <li key={fact}>
+                  {activeProgram.topics.map((topic) => (
+                    <li key={topic}>
                       <CheckCircle2 size={16} aria-hidden="true" />
-                      <span>{fact}</span>
+                      <span>{topic}</span>
                     </li>
                   ))}
                 </ul>
+                <div className="practice-box">
+                  <strong>Практический результат</strong>
+                  <p>{activeProgram.practice}</p>
+                  <SourceLink href={activeProgram.source}>{activeProgram.sourceLabel}</SourceLink>
+                </div>
               </article>
             </div>
           </section>
 
-          <section className="chart-grid" aria-labelledby="capabilities-title">
+          <section className="chart-grid" aria-labelledby="progress-title">
             <article className="chart-card wide">
               <div className="card-title">
                 <div>
-                  <p className="eyebrow">Capability map</p>
-                  <h2 id="capabilities-title">Позиционирование моделей</h2>
+                  <p className="eyebrow">Learning curve</p>
+                  <h2 id="progress-title">Рост сложности по уровням</h2>
                 </div>
-                <Code2 size={20} aria-hidden="true" />
+                <Layers3 size={20} aria-hidden="true" />
               </div>
               <div className="chart-wrap">
                 <ResponsiveContainer width="100%" height={260}>
-                  <BarChart data={capabilityData} margin={{ top: 8, right: 8, left: -20, bottom: 0 }}>
+                  <AreaChart data={depthData} margin={{ top: 8, right: 8, left: -20, bottom: 0 }}>
+                    <defs>
+                      <linearGradient id="depthGradient" x1="0" x2="0" y1="0" y2="1">
+                        <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.42} />
+                        <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0.04} />
+                      </linearGradient>
+                    </defs>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                    <XAxis dataKey="label" tickLine={false} axisLine={false} />
+                    <XAxis dataKey="name" tickLine={false} axisLine={false} />
                     <YAxis hide domain={[0, 100]} />
-                    <Tooltip cursor={{ fill: "rgba(2, 105, 111, 0.08)" }} />
-                    <Bar dataKey="opus" name="Opus" fill="hsl(var(--chart-1))" radius={[6, 6, 0, 0]} />
-                    <Bar dataKey="sonnet" name="Sonnet" fill="hsl(var(--chart-2))" radius={[6, 6, 0, 0]} />
-                    <Bar dataKey="haiku" name="Haiku" fill="hsl(var(--chart-3))" radius={[6, 6, 0, 0]} />
-                  </BarChart>
+                    <Tooltip />
+                    <Area
+                      type="monotone"
+                      dataKey="depth"
+                      name="Сложность"
+                      stroke="hsl(var(--primary))"
+                      fill="url(#depthGradient)"
+                      strokeWidth={2}
+                    />
+                  </AreaChart>
                 </ResponsiveContainer>
               </div>
               <p className="chart-note">
-                Индекс является визуальной нормализацией официального позиционирования моделей, а не публичным benchmark.
+                Индекс сложности составлен редакционно по структуре материалов Anthropic: от вводных курсов к API,
+                интеграциям, агентной разработке и evals.
               </p>
             </article>
 
             <article className="chart-card">
               <div className="card-title">
                 <div>
-                  <p className="eyebrow">Model reports</p>
-                  <h2>Динамика поколений</h2>
+                  <p className="eyebrow">Tracks</p>
+                  <h2>Распределение гайда</h2>
                 </div>
-                <BookOpenCheck size={20} aria-hidden="true" />
+                <Compass size={20} aria-hidden="true" />
               </div>
               <div className="chart-wrap compact">
                 <ResponsiveContainer width="100%" height={220}>
-                  <AreaChart data={timeline} margin={{ top: 8, right: 8, left: -20, bottom: 0 }}>
-                    <defs>
-                      <linearGradient id="modelGradient" x1="0" x2="0" y1="0" y2="1">
-                        <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.42} />
-                        <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0.04} />
-                      </linearGradient>
-                    </defs>
-                    <XAxis dataKey="date" tickLine={false} axisLine={false} />
-                    <YAxis hide domain={[30, 50]} />
+                  <BarChart data={trackData} layout="vertical" margin={{ top: 4, right: 24, left: 4, bottom: 4 }}>
+                    <CartesianGrid strokeDasharray="3 3" horizontal={false} />
+                    <XAxis type="number" hide domain={[0, 5]} />
+                    <YAxis dataKey="name" type="category" tickLine={false} axisLine={false} width={70} />
                     <Tooltip />
-                    <Area type="monotone" dataKey="value" stroke="hsl(var(--primary))" fill="url(#modelGradient)" strokeWidth={2} />
-                  </AreaChart>
+                    <Bar dataKey="count" name="Уровней" radius={[0, 8, 8, 0]}>
+                      {trackData.map((entry, index) => (
+                        <Cell key={entry.name} fill={`hsl(var(--chart-${(index % 4) + 1}))`} />
+                      ))}
+                    </Bar>
+                  </BarChart>
                 </ResponsiveContainer>
               </div>
             </article>
           </section>
 
-          <section id="safety" className="section-grid" aria-labelledby="safety-title">
+          <section id="practice" className="section-grid" aria-labelledby="practice-title">
             <div className="section-heading">
-              <p className="eyebrow">Responsible scaling</p>
-              <h2 id="safety-title">Safety как продуктовый слой</h2>
-              <p>
-                Anthropic публикует Transparency Hub, описывает safety evaluations и указывает уровни ASL/RSP для моделей.
-              </p>
+              <p className="eyebrow">How to use</p>
+              <h2 id="practice-title">Как проходить маршрут</h2>
+              <p>Для корпоративного обучения удобно проходить уровни спринтами и завершать каждый измеримым артефактом.</p>
             </div>
 
             <div className="safety-layout">
-              <article className="chart-card">
-                <div className="card-title">
-                  <div>
-                    <p className="eyebrow">Safety labels</p>
-                    <h3>Уровни моделей</h3>
-                  </div>
-                  <ShieldCheck size={20} aria-hidden="true" />
-                </div>
-                <div className="chart-wrap compact">
-                  <ResponsiveContainer width="100%" height={220}>
-                    <BarChart data={safetyData} layout="vertical" margin={{ top: 4, right: 28, left: 8, bottom: 4 }}>
-                      <CartesianGrid strokeDasharray="3 3" horizontal={false} />
-                      <XAxis type="number" hide domain={[4, 5]} />
-                      <YAxis dataKey="name" type="category" tickLine={false} axisLine={false} width={58} />
-                      <Tooltip />
-                      <Bar dataKey="value" radius={[0, 8, 8, 0]}>
-                        {safetyData.map((entry, index) => (
-                          <Cell key={entry.name + index} fill={`hsl(var(--chart-${(index % 4) + 1}))`} />
-                        ))}
-                      </Bar>
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
+              <article className="mini-card">
+                <GraduationCap size={20} aria-hidden="true" />
+                <h3>Для сотрудников без кода</h3>
+                <p>Берите уровни 1–3: Claude 101, AI Fluency и prompt engineering. Итог: библиотека рабочих промптов и правила проверки результатов.</p>
               </article>
-
-              <div className="safety-stack">
-                {[
-                  ["Constitutional AI", "Claude должен быть helpful, honest and harmless; Anthropic публикует отдельную страницу Constitution."],
-                  ["Safeguards", "В материалах о защите Claude Anthropic описывает выявление злоупотреблений и real-time defenses."],
-                  ["RSP", "Responsible Scaling Policy задаёт процесс оценки потенциально катастрофических рисков перед релизами."],
-                ].map(([title, text]) => (
-                  <article className="mini-card" key={title}>
-                    <h3>{title}</h3>
-                    <p>{text}</p>
-                  </article>
-                ))}
-              </div>
+              <article className="mini-card">
+                <Code2 size={20} aria-hidden="true" />
+                <h3>Для разработчиков</h3>
+                <p>После уровней 1–3 переходите к API, Files, batch, prompt caching, MCP и Claude Code. Итог: прототип или автоматизация.</p>
+              </article>
+              <article className="mini-card">
+                <BrainCircuit size={20} aria-hidden="true" />
+                <h3>Для руководителей и L&D</h3>
+                <p>Добавьте уровень 8: критерии успеха, evals, риски, политика использования и pilot charter для команды.</p>
+              </article>
             </div>
           </section>
 
           <section id="sources" className="sources-card" aria-labelledby="sources-title">
             <div>
               <p className="eyebrow">Sources</p>
-              <h2 id="sources-title">Проверяемые страницы</h2>
-              <p>Все основные утверждения в интерфейсе собраны из открытых страниц Anthropic. Внешние ссылки открываются в новой вкладке.</p>
+              <h2 id="sources-title">Официальные страницы Anthropic</h2>
+              <p>Гайд не копирует закрытые курсы, а структурирует открытые страницы Anthropic и документации Claude в учебный маршрут.</p>
             </div>
             <div className="source-grid">
-              <SourceLink href={sourceLinks.company}>Company</SourceLink>
-              <SourceLink href={sourceLinks.claude}>Claude product page</SourceLink>
-              <SourceLink href={sourceLinks.transparency}>Transparency Hub</SourceLink>
-              <SourceLink href={sourceLinks.careers}>Careers</SourceLink>
-              <SourceLink href={sourceLinks.rsp}>Responsible Scaling Policy</SourceLink>
+              <SourceLink href={sources.learn}>Anthropic Academy</SourceLink>
+              <SourceLink href={sources.aiFluency}>AI Fluency</SourceLink>
+              <SourceLink href={sources.build}>Build with Claude</SourceLink>
+              <SourceLink href={sources.prompt}>Prompt engineering</SourceLink>
+              <SourceLink href={sources.claudeCode}>Claude Code docs</SourceLink>
+              <SourceLink href={sources.claude}>Claude product page</SourceLink>
+              <SourceLink href={sources.company}>Company</SourceLink>
+              <SourceLink href={sources.education}>Claude for Education</SourceLink>
             </div>
           </section>
         </main>

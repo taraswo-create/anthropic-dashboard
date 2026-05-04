@@ -517,6 +517,65 @@
   background: hsl(var(--primary) / 0.1);
 }
 
+.program-card {
+  width: 100%;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.85rem;
+  border: 1px solid hsl(var(--border));
+  border-radius: 1rem;
+  background: hsl(var(--card) / 0.82);
+  color: hsl(var(--foreground));
+  padding: 0.85rem 1rem;
+  text-align: left;
+}
+
+.program-card.active {
+  border-color: hsl(var(--primary));
+  background: hsl(var(--primary) / 0.1);
+}
+
+.program-index {
+  display: grid;
+  place-items: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 999px;
+  background: hsl(var(--primary) / 0.12);
+  color: hsl(var(--primary));
+  font-size: 0.78rem;
+  font-weight: 850;
+}
+
+.program-copy {
+  min-width: 0;
+}
+
+.program-copy strong,
+.program-copy small {
+  display: block;
+}
+
+.program-copy strong {
+  font-weight: 780;
+}
+
+.program-copy small,
+.program-track,
+.detail-lede {
+  color: hsl(var(--muted-foreground));
+}
+
+.program-track {
+  border: 1px solid hsl(var(--border));
+  border-radius: 999px;
+  padding: 0.28rem 0.55rem;
+  font-size: 0.72rem;
+  font-weight: 760;
+  white-space: nowrap;
+}
+
 .model-detail {
   padding: 1.2rem;
 }
@@ -568,6 +627,31 @@
   color: hsl(var(--primary));
 }
 
+.detail-lede {
+  margin-top: 0.9rem;
+  line-height: 1.6;
+}
+
+.practice-box {
+  display: grid;
+  gap: 0.65rem;
+  margin-top: 1.15rem;
+  border-radius: 1rem;
+  background: hsl(var(--muted) / 0.62);
+  padding: 1rem;
+}
+
+.practice-box strong {
+  font-weight: 820;
+  letter-spacing: -0.02em;
+}
+
+.practice-box p {
+  margin: 0;
+  color: hsl(var(--muted-foreground));
+  line-height: 1.55;
+}
+
 .chart-grid {
   grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr);
 }
@@ -606,6 +690,11 @@
 
 .mini-card {
   padding: 1.1rem;
+}
+
+.mini-card svg {
+  margin-bottom: 0.85rem;
+  color: hsl(var(--primary));
 }
 
 .sources-card {
@@ -684,6 +773,15 @@
   .model-row {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .program-card {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .program-track {
+    grid-column: 2;
+    justify-self: start;
   }
 
   .chart-card,
